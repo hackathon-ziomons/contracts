@@ -11,6 +11,7 @@ contract ProductManager is UserManager {
         uint productId;
         address actionCreator;
         string actionMetadata;
+        mapping(address => uint8) actionVotes;
     }
 
     struct Product {
@@ -96,5 +97,21 @@ contract ProductManager is UserManager {
         productId = userActions[_userAddress][_actionIndex].productId;
         actionCreator = userActions[_userAddress][_actionIndex].actionCreator;
         actionMetadata = userActions[_userAddress][_actionIndex].actionMetadata;
+    }
+
+    function vote(uint _productId, uint _actionId, uint8 _value)
+        public
+        onlyUser
+    {
+        require(_value < 5);
+        products[_productId].productActions[_actionId].actionVotes[msg.sender] = _value;
+    }
+
+    function getActionVote(uint _productId, uint _actionId, address _userAddress)
+        public
+        constant
+        returns(uint8)
+    {
+        return products[_productId].productActions[_actionId].actionVotes[_userAddress];
     }
 }
