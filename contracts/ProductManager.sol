@@ -5,13 +5,13 @@ import "./UserManager.sol";
 
 contract ProductManager is UserManager {
 
-    event AddedProduct(uint indexed _productId);
+    event ProductAdded(uint indexed _productId);
 
     struct Action {
         uint productId;
         address actionCreator;
         string actionMetadata;
-        mapping(address => uint8) actionVotes;
+        mapping(address => mapping(uint8 => uint8)) actionVotes;
     }
 
     struct Product {
@@ -20,8 +20,24 @@ contract ProductManager is UserManager {
         mapping(uint => Action) productActions;
     }
 
+    string[] voteCategories;
     mapping(address => Action[]) userActions;
     Product[] products;
+
+    function addVoteCategory(string _categoryName)
+        public
+        onlyOwner
+    {
+        voteCategories.push(_categoryName);
+    }
+
+    function getVoteCategoriesCount()
+        public
+        constant
+        returns(uint)
+    {
+        return voteCategories.length;
+    }
 
     function addProductAction(uint _productId, string _actionMetadata)
         public
@@ -74,7 +90,7 @@ contract ProductManager is UserManager {
         userActions[msg.sender].push(Action(products.length, msg.sender, _actionMetadata));
         addProductAction(products.length - 1, _actionMetadata);
 
-        emit AddedProduct(getProductCount() - 1);
+        emit ProductAdded(getProductCount() - 1);
     }
 
     function getUserActionCount(address _userAddress)
@@ -99,19 +115,22 @@ contract ProductManager is UserManager {
         actionMetadata = userActions[_userAddress][_actionIndex].actionMetadata;
     }
 
-    function vote(uint _productId, uint _actionId, uint8 _value)
+    function addActionVote(uint _productId, uint _actionId, uint8 _voteCategory, uint8 _value)
         public
         onlyUser
     {
-        require(_value < 5);
-        products[_productId].productActions[_actionId].actionVotes[msg.sender] = _value;
+        require(
+            _value < 5 &&
+            _voteCategory < voteCategories.length
+        );
+        products[_productId].productActions[_actionId].actionVotes[msg.sender][_voteCategory] = _value;
     }
 
-    function getActionVote(uint _productId, uint _actionId, address _userAddress)
+    function getActionVote(uint _productId, uint _actionId, uint8 _voteCategory, address _userAddress)
         public
         constant
         returns(uint8)
     {
-        return products[_productId].productActions[_actionId].actionVotes[_userAddress];
+        return products[_productId].productActions[_actionId].actionVotes[_userAddress][_voteCategory];
     }
 }
