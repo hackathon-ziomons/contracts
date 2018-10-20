@@ -3,12 +3,13 @@ pragma solidity ^0.4.24;
 import "./Ownable.sol";
 
 
-contract UserManager is Ownable {
+contract UserManager is Ownable, ProductManager {
 
     struct User {
         address userAddress;
         string userMetadata;
         uint userBalance;
+        Action[] userActions;
     }
 
     address[] public usersLUT;
@@ -58,6 +59,14 @@ contract UserManager is Ownable {
         return userMapping[_userAddress].userBalance;
     }
 
+    function getUserActions(address _userAddress)
+        public
+        constant
+        returns(Action)
+    {
+        return userMapping[_userAddress].userActions;
+    }
+
     function addUser(address _userAddress, string _userMetadata)
         public
         onlyOwner
@@ -67,7 +76,8 @@ contract UserManager is Ownable {
             !userExists(_userAddress)
         );
 
-        userMapping[_userAddress] = User(_userAddress, _userMetadata, 0);
+        Action[] tmp;
+        userMapping[_userAddress] = User(_userAddress, _userMetadata, 0, tmp);
         userAddressLUTPosition[_userAddress] = usersLUT.push(_userAddress);
     }
 
@@ -82,6 +92,12 @@ contract UserManager is Ownable {
         userAddressLUTPosition[usersLUT[userCount() - 1]] = userAddressLUTPosition[_userAddress];
         userAddressLUTPosition[_userAddress] = 0;
         usersLUT.length--;
-        userMapping[_userAddress] = User(0x0, "", 0);
+        Action[] tmp;
+        userMapping[_userAddress] = User(0x0, "", 0, tmp);
+    }
+
+    modifier onlyUser() {
+        require(userExists(msg.sender));
+        _;
     }
 }
