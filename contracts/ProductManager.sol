@@ -36,7 +36,7 @@ contract ProductManager is UserManager {
         constant
         returns(uint)
     {
-        return 6;//products[_productId].productActions.length;
+        return products[_productId].productActionsLength;
     }
 
     function getProductAction(uint _productId, uint _actionIndex)

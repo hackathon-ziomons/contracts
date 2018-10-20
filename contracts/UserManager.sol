@@ -42,20 +42,18 @@ contract UserManager is Ownable {
         return usersLUT;
     }
 
-    function getUserMetadata(address _userAddress)
+    function getUser(address _userAddress)
         public
         constant
-        returns(string)
+        returns(
+            address userAddress,
+            string userMetadata,
+            uint userBalance
+        )
     {
-        return userMapping[_userAddress].userMetadata;
-    }
-
-    function getUserBalance(address _userAddress)
-        public
-        constant
-        returns(uint)
-    {
-        return userMapping[_userAddress].userBalance;
+        userAddress = userMapping[_userAddress].userAddress;
+        userMetadata = userMapping[_userAddress].userMetadata;
+        userBalance = userMapping[_userAddress].userBalance;
     }
 
     function addUser(address _userAddress, string _userMetadata)
@@ -76,8 +74,10 @@ contract UserManager is Ownable {
         onlyOwner
     {
         require(
-            userExists(_userAddress)
+            userExists(_userAddress) &&
+            _userAddress != owner()
         );
+
         usersLUT[userAddressLUTPosition[_userAddress] - 1] = usersLUT[userCount() - 1];
         userAddressLUTPosition[usersLUT[userCount() - 1]] = userAddressLUTPosition[_userAddress];
         userAddressLUTPosition[_userAddress] = 0;

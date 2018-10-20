@@ -4,7 +4,7 @@ import "./ProductManager.sol";
 import "./SafeMath.sol";
 
 
-contract GASContractc is ProductManager {
+contract GASContract is ProductManager {
     using SafeMath for uint;
 
     constructor(string _ownerMetadata) {
