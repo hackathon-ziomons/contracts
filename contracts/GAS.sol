@@ -1,10 +1,10 @@
 pragma solidity ^0.4.24;
 
-import "./UserManager.sol";
+import "./ProductManager.sol";
 import "./SafeMath.sol";
 
 
-contract GAS is UserManager {
+contract GAS is ProductManager {
     using SafeMath for uint;
 
     constructor(string _ownerMetadata) {
