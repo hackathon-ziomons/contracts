@@ -16,7 +16,7 @@ contract GASContract is ProductManager {
         payable
         onlyUser
     {
-        userMapping[msg.sender].userBalance.add(msg.value);
+        userMapping[msg.sender].userBalance = userMapping[msg.sender].userBalance.add(msg.value);
     }
 
     function withdraw()

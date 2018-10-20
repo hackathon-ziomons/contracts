@@ -6,7 +6,7 @@ import "./UserManager.sol";
 contract ProductManager is UserManager {
 
     event ProductAdded(uint indexed _productId);
-
+    //TODO add timestamo
     struct Action {
         uint productId;
         address actionCreator;
@@ -31,6 +31,15 @@ contract ProductManager is UserManager {
         voteCategories.push(_categoryName);
     }
 
+    function getVoteCategory(uint _categoryId)
+        public
+        constant
+        returns(string)
+    {
+        require(_categoryId < voteCategories.length);
+        return voteCategories[_categoryId];
+    }
+
     function getVoteCategoriesCount()
         public
         constant
@@ -50,7 +59,7 @@ contract ProductManager is UserManager {
         userActions[msg.sender].push(Action(_productId, msg.sender, _actionMetadata));
     }
 
-    function getProductCount()
+    function "()
         public
         constant
         returns(uint)
@@ -110,6 +119,7 @@ contract ProductManager is UserManager {
             string actionMetadata
         )
     {
+        require(_actionIndex < userActions[_userAddress].length);
         productId = userActions[_userAddress][_actionIndex].productId;
         actionCreator = userActions[_userAddress][_actionIndex].actionCreator;
         actionMetadata = userActions[_userAddress][_actionIndex].actionMetadata;
