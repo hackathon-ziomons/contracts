@@ -7,11 +7,11 @@ contract ProductManager is UserManager {
 
     event ProductAdded(uint indexed _productId);
 
-    //TODO add timestamp
     struct Action {
         uint productId;
         address actionCreator;
         string actionMetadata;
+        uint actionTimestamp;
         mapping(address => mapping(uint8 => uint8)) actionVotes;
     }
 
@@ -55,9 +55,9 @@ contract ProductManager is UserManager {
     {
         require(_productId < products.length);
         uint actionIndex = products[_productId].productActionsLength;
-        products[_productId].productActions[actionIndex] = Action(_productId, msg.sender, _actionMetadata);
+        products[_productId].productActions[actionIndex] = Action(_productId, msg.sender, _actionMetadata, now);
         products[_productId].productActionsLength++;
-        userActions[msg.sender].push(Action(_productId, msg.sender, _actionMetadata));
+        userActions[msg.sender].push(Action(_productId, msg.sender, _actionMetadata, now));
     }
 
     function getProductCount()
@@ -83,13 +83,15 @@ contract ProductManager is UserManager {
         returns(
             uint productId,
             address actionCreator,
-            string actionMetadata
+            string actionMetadata,
+            uint actionTimestamp
         )
     {
         require(_productId < getProductCount());
         productId = products[_productId].productActions[_actionIndex].productId;
         actionCreator = products[_productId].productActions[_actionIndex].actionCreator;
         actionMetadata = products[_productId].productActions[_actionIndex].actionMetadata;
+        actionTimestamp = products[_productId].productActions[_actionIndex].actionTimestamp;
     }
 
     function addProduct(string _actionMetadata)
@@ -116,13 +118,15 @@ contract ProductManager is UserManager {
         returns(
             uint productId,
             address actionCreator,
-            string actionMetadata
+            string actionMetadata,
+            uint actionTimestamp
         )
     {
         require(_actionIndex < userActions[_userAddress].length);
         productId = userActions[_userAddress][_actionIndex].productId;
         actionCreator = userActions[_userAddress][_actionIndex].actionCreator;
         actionMetadata = userActions[_userAddress][_actionIndex].actionMetadata;
+        actionTimestamp = userActions[_userAddress][_actionIndex].actionTimestamp;
     }
 
     function addActionVote(uint _productId, uint _actionId, uint8 _voteCategory, uint8 _value)
