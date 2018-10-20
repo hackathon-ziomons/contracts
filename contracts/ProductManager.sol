@@ -4,7 +4,8 @@ import "./UserManager.sol";
 
 
 contract ProductManager is UserManager {
-    mapping(address => Action[]) userActions;
+
+    event AddedProduct(uint indexed _productId);
 
     struct Action {
         uint productId;
@@ -18,6 +19,7 @@ contract ProductManager is UserManager {
         mapping(uint => Action) productActions;
     }
 
+    mapping(address => Action[]) userActions;
     Product[] products;
 
     function addProductAction(uint _productId, string _actionMetadata)
@@ -31,11 +33,20 @@ contract ProductManager is UserManager {
         userActions[msg.sender].push(Action(_productId, msg.sender, _actionMetadata));
     }
 
+    function getProductCount()
+        public
+        constant
+        returns(uint)
+    {
+        return products.length;
+    }
+
     function getProductActionCount(uint _productId)
         public
         constant
         returns(uint)
     {
+        require(_productId < getProductCount());
         return products[_productId].productActionsLength;
     }
 
@@ -48,6 +59,7 @@ contract ProductManager is UserManager {
             string actionMetadata
         )
     {
+        require(_productId < getProductCount());
         productId = products[_productId].productActions[_actionIndex].productId;
         actionCreator = products[_productId].productActions[_actionIndex].actionCreator;
         actionMetadata = products[_productId].productActions[_actionIndex].actionMetadata;
@@ -59,7 +71,9 @@ contract ProductManager is UserManager {
     {
         products.push(Product(products.length, 0));
         userActions[msg.sender].push(Action(products.length, msg.sender, _actionMetadata));
-        addProductAction(products.length, _actionMetadata);
+        addProductAction(products.length - 1, _actionMetadata);
+
+        emit AddedProduct(getProductCount() - 1);
     }
 
     function getUserActionCount(address _userAddress)
