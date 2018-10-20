@@ -4,5 +4,5 @@ import "./UserManager.sol";
 
 
 contract GAS is UserManager {
-    
+
 }
