@@ -31,15 +31,6 @@ contract ProductManager is UserManager {
         userActions[msg.sender].push(Action(_productId, msg.sender, _actionMetadata));
     }
 
-    function addProduct(string _actionMetadata)
-        public
-        onlyUser
-    {
-        products.push(Product(products.length, 0));
-        userActions[msg.sender].push(Action(products.length, msg.sender, _actionMetadata));
-        addProductAction(products.length, _actionMetadata);
-    }
-
     function getProductActionCount(uint _productId)
         public
         constant
@@ -60,6 +51,15 @@ contract ProductManager is UserManager {
         productId = products[_productId].productActions[_actionIndex].productId;
         actionCreator = products[_productId].productActions[_actionIndex].actionCreator;
         actionMetadata = products[_productId].productActions[_actionIndex].actionMetadata;
+    }
+
+    function addProduct(string _actionMetadata)
+        public
+        onlyUser
+    {
+        products.push(Product(products.length, 0));
+        userActions[msg.sender].push(Action(products.length, msg.sender, _actionMetadata));
+        addProductAction(products.length, _actionMetadata);
     }
 
     function getUserActionCount(address _userAddress)
