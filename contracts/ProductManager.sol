@@ -6,7 +6,8 @@ import "./UserManager.sol";
 contract ProductManager is UserManager {
 
     event ProductAdded(uint indexed _productId);
-    //TODO add timestamo
+
+    //TODO add timestamp
     struct Action {
         uint productId;
         address actionCreator;
@@ -59,7 +60,7 @@ contract ProductManager is UserManager {
         userActions[msg.sender].push(Action(_productId, msg.sender, _actionMetadata));
     }
 
-    function "()
+    function getProductCount()
         public
         constant
         returns(uint)
@@ -96,7 +97,6 @@ contract ProductManager is UserManager {
         onlyUser
     {
         products.push(Product(products.length, 0));
-        userActions[msg.sender].push(Action(products.length, msg.sender, _actionMetadata));
         addProductAction(products.length - 1, _actionMetadata);
 
         emit ProductAdded(getProductCount() - 1);
